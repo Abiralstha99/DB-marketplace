@@ -1,0 +1,11 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Local agent configuration
+/.agents/
+/.cursor/
+/skills-lock.json
+
+# Project-local documentation
+/docs/
