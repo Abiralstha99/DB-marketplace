@@ -3,7 +3,7 @@
 A marketplace application for students to buy and sell items such as textbooks
 and other course-related goods.
 
-## Core Functionalities
+## Planned Core Functionalities
 
 ### Students
 
@@ -60,27 +60,39 @@ and other course-related goods.
 
 ```text
 DB-marketplace/
-├── app/
-│   ├── config/          # Application configuration, including database setup
-│   ├── controllers/     # Request handling and application flow
-│   └── models/          # Database access and application data models
-├── database/            # Database schema, seed data, and migrations
-├── public/              # Public web root
+├── database/            # Reserved for database files
+├── function/            # Reserved for PHP functions
+├── public/
 │   ├── assets/
-│   │   ├── css/         # Stylesheets
-│   │   ├── images/      # Static images
-│   │   └── js/          # Browser-side JavaScript
-│   ├── uploads/         # User-uploaded files
-│   ├── index.php        # Application entry point
-│   └── hello.php        # PHP test page
+│   │   ├── css/style.css
+│   │   ├── images/gettysburg-logo.png
+│   │   └── js/main.js
+│   └── uploads/         # Reserved for uploaded files
 ├── views/
-│   ├── admin/           # Administrator-facing pages
-│   └── partials/        # Reusable view components
+│   ├── admin/           # Reserved for administrator views
+│   ├── partials/
+│   │   ├── header.php
+│   │   └── footer.php
+│   └── users/           # Reserved for user views
 ├── .gitignore
+├── index.php            # PHP entry point
+├── package.json         # npm dependency declaration
+├── package-lock.json
 └── README.md
 ```
 
 ## Current Status
 
-The project is currently being set up. The public PHP entry point is available
-at [`public/index.php`](public/index.php)
+The project is currently being set up. The PHP entry point is
+[`index.php`](index.php).
+
+## Local development
+
+Run `php -S localhost:8000` from the project root, then open
+<http://localhost:8000>.
+
+The home page loads Bootstrap 6.0.0-alpha.1 CSS and its JavaScript bundle from
+jsDelivr. Custom styles in `public/assets/css/style.css` load after Bootstrap.
+The CDN requires an internet connection; no build step is needed.
+`package.json` also declares Bootstrap 5 as an npm dependency, but the current
+page uses the Bootstrap 6 CDN links rather than the npm package.
