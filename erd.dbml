@@ -1,0 +1,214 @@
+// DB Marketplace schema
+// Target: MySQL / MariaDB
+// Paste into https://dbdiagram.io to view the ER diagram.
+
+Project db_marketplace {
+  database_type: 'MySQL'
+  Note: '''
+  Campus marketplace for students to buy and sell textbooks and course-related goods.
+
+  Rules enforced by the app:
+  - A seller can't make an offer on, or favorite, their own listing.
+  - Offers, favorites, and new messages are only allowed on active listings.
+  - A reviewer must be the buyer or seller on the transaction; the reviewee is the other party.
+  - Suspended or banned users can't create listings, send offers, or send messages.
+  - When a listing is marked sold, its other pending offers become 'expired'.
+  - Status-style columns only hold the values listed in their notes.
+  - Money limits: price >= 0, amount > 0, final_price >= 0. Ratings are 1 to 5.
+  - The app supplies every required value, including timestamps with NOW().
+  - To delete a row, the app deletes the rows that reference it first.
+  '''
+}
+
+// --------------------------- People ---------------------------
+
+Table users {
+  user_id int [pk, increment]
+  // unique: no two rows can have the same value here, so two users cannot share an email.
+  // It makes email a candidate key while user_id stays the primary key.
+  // With two columns, as in courses below, only the pair has to be different.
+  email varchar(255) [not null, unique, note: 'School email']
+  password_hash varchar(255) [not null]
+  first_name varchar(100) [not null]
+  last_name varchar(100) [not null]
+  class_year int [null, note: 'Graduation year; NULL for staff']
+  role varchar(20) [not null, note: 'student, admin']
+  account_status varchar(20) [not null, note: 'active, suspended, banned']
+  suspended_until datetime [null, note: 'Only set while suspended']
+  created_at datetime [not null]
+  last_login_at datetime [null]
+
+  Note: 'Students and admins share one table. Warnings are logged in moderation_actions, not stored as a status.'
+}
+
+Table moderation_actions {
+  action_id int [pk, increment]
+  // ref: is a FOREIGN KEY. The value here must match a primary key in the table it points to,
+  // or be NULL if the column allows it. So admin_id must be a real user.
+  // "ref: >" means many rows here to one row there, and "ref: -" means one to one.
+  admin_id int [not null, ref: > users.user_id]
+  target_user_id int [null, ref: > users.user_id]
+  target_listing_id int [null, ref: > listings.listing_id]
+  report_id int [null, ref: > reports.report_id, note: 'Report that prompted the action, if any']
+  action_type varchar(20) [not null, note: 'warn, suspend, ban, reinstate, edit_listing, remove_listing']
+  reason varchar(500) [not null]
+  expires_at datetime [null, note: 'For suspensions']
+  created_at datetime [not null]
+
+  Note: 'Audit log of every admin action.'
+}
+
+// --------------------------- Catalog ---------------------------
+
+Table categories {
+  category_id int [pk, increment]
+  name varchar(100) [not null, unique, note: 'e.g. Textbooks, Electronics, Lab Supplies']
+}
+
+Table courses {
+  course_id int [pk, increment]
+  department varchar(10) [not null, note: 'e.g. CS']
+  course_number varchar(10) [not null, note: 'e.g. 340']
+  title varchar(150) [null]
+
+  Indexes {
+    (department, course_number) [unique]
+  }
+
+  Note: 'Lookup table so "CS 340", "cs340" and "CS-340" are one course.'
+}
+
+Table listings {
+  listing_id int [pk, increment]
+  seller_id int [not null, ref: > users.user_id]
+  category_id int [not null, ref: > categories.category_id]
+  course_id int [null, ref: > courses.course_id, note: 'Not every item is tied to a course']
+  title varchar(150) [not null]
+  description varchar(1000) [not null]
+  price decimal(8,2) [not null, note: '0.00 = free']
+  item_condition varchar(20) [not null, note: 'new, like_new, good, fair, poor. "condition" is a reserved word in MySQL']
+  pickup_location varchar(100) [null, note: 'Preferred meetup spot, e.g. Musselman Library']
+  status varchar(20) [not null, note: 'active, sold, deleted (by the seller), removed (by an admin)']
+  created_at datetime [not null]
+  updated_at datetime [not null, note: 'App sets this to NOW() on every edit']
+  sold_at datetime [null]
+
+  Indexes {
+    status [name: 'idx_listings_status']
+    price [name: 'idx_listings_price']
+    created_at [name: 'idx_listings_created']
+  }
+
+  Note: '''
+  Never hard-deleted: offers, messages, reviews and reports reference listings.
+  Keyword search uses LIKE on title and description.
+  '''
+}
+
+Table listing_images {
+  image_id int [pk, increment]
+  listing_id int [not null, ref: > listings.listing_id]
+  file_path varchar(255) [not null, note: 'Relative to public/uploads/']
+  sort_order int [not null, note: '0 = thumbnail']
+  uploaded_at datetime [not null]
+}
+
+Table favorites {
+  user_id int [not null, ref: > users.user_id]
+  listing_id int [not null, ref: > listings.listing_id]
+  created_at datetime [not null]
+
+  Indexes {
+    (user_id, listing_id) [pk]
+  }
+
+  Note: 'Watchlist. Composite PK stops a listing being saved twice.'
+}
+
+// --------------------------- Deals ---------------------------
+
+Table offers {
+  offer_id int [pk, increment]
+  listing_id int [not null, ref: > listings.listing_id]
+  buyer_id int [not null, ref: > users.user_id, note: 'Buyer in this negotiation']
+  made_by_id int [not null, ref: > users.user_id, note: 'Buyer, or the seller on a counter']
+  parent_offer_id int [null, ref: > offers.offer_id, note: 'Offer this one counters']
+  amount decimal(8,2) [not null]
+  note varchar(500) [null]
+  status varchar(20) [not null, note: 'pending, accepted, rejected, countered, withdrawn, expired']
+  created_at datetime [not null]
+  responded_at datetime [null]
+
+  Note: 'A counter marks the original offer "countered" and adds a new pending row pointing to it.'
+}
+
+Table transactions {
+  transaction_id int [pk, increment]
+  listing_id int [not null, unique, ref: - listings.listing_id, note: 'An item sells once']
+  buyer_id int [not null, ref: > users.user_id]
+  offer_id int [null, unique, ref: - offers.offer_id, note: 'Accepted offer, if the sale came from one']
+  final_price decimal(8,2) [not null]
+  completed_at datetime [not null]
+
+  Note: 'One row per completed sale. Seller is reached through the listing.'
+}
+
+Table reviews {
+  review_id int [pk, increment]
+  transaction_id int [not null, ref: > transactions.transaction_id]
+  reviewer_id int [not null, ref: > users.user_id]
+  reviewee_id int [not null, ref: > users.user_id]
+  rating int [not null, note: '1 to 5']
+  comment varchar(500) [null]
+  created_at datetime [not null]
+
+  Indexes {
+    (transaction_id, reviewer_id) [unique]
+  }
+
+  Note: 'At most one review from each side of a sale.'
+}
+
+Table conversations {
+  conversation_id int [pk, increment]
+  listing_id int [not null, ref: > listings.listing_id]
+  buyer_id int [not null, ref: > users.user_id]
+  created_at datetime [not null]
+
+  Indexes {
+    (listing_id, buyer_id) [unique]
+  }
+
+  Note: 'One thread per buyer per listing. Seller is implied by the listing.'
+}
+
+Table messages {
+  message_id int [pk, increment]
+  conversation_id int [not null, ref: > conversations.conversation_id]
+  sender_id int [not null, ref: > users.user_id]
+  body varchar(500) [not null]
+  sent_at datetime [not null]
+  read_at datetime [null, note: 'NULL = unread']
+}
+
+// --------------------------- Moderation ---------------------------
+
+Table reports {
+  report_id int [pk, increment]
+  reporter_id int [not null, ref: > users.user_id]
+  reported_user_id int [not null, ref: > users.user_id, note: 'Always set; for a listing report, the seller']
+  reported_listing_id int [null, ref: > listings.listing_id, note: 'Set only for listing reports']
+  reason varchar(20) [not null, note: 'spam, prohibited_item, scam, harassment, inappropriate, other']
+  details varchar(500) [null]
+  status varchar(20) [not null, note: 'open, under_review, dismissed, actioned, escalated']
+  reviewed_by int [null, ref: > users.user_id, note: 'Admin who handled it']
+  resolution_note varchar(500) [null]
+  created_at datetime [not null]
+  reviewed_at datetime [null]
+
+  Indexes {
+    status [name: 'idx_reports_status']
+  }
+
+  Note: 'Reporter anonymity is handled in the admin view, not in the data.'
+}
