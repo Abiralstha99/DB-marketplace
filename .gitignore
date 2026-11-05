@@ -9,3 +9,6 @@
 
 # Project-local documentation
 /docs/
+
+# Database login (copy database/db_connect.example.php; matches any folder)
+db_connect.php
