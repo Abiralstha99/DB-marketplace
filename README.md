@@ -61,6 +61,7 @@ and other course-related goods.
 ```text
 DB-marketplace/
 ├── database/            # Reserved for database files
+│   └── db_connect.example.php  # Copy to db_connect.php (not committed)
 ├── function/            # Reserved for PHP functions
 ├── public/
 │   ├── assets/
@@ -96,3 +97,29 @@ jsDelivr. Custom styles in `public/assets/css/style.css` load after Bootstrap.
 The CDN requires an internet connection; no build step is needed.
 `package.json` also declares Bootstrap 5 as an npm dependency, but the current
 page uses the Bootstrap 6 CDN links rather than the npm package.
+
+## Database connection
+
+Pages connect to the team database through `database/db_connect.php`. That file
+holds a password, so it is in `.gitignore` and each person keeps their own copy:
+
+```sh
+cp database/db_connect.example.php database/db_connect.php
+```
+
+Then set `$user` and `$pass` in the copy to your class database login. Never put
+a real password in the template.
+
+To use the connection, load the file at the top of a page. It creates `$db`, a
+PDO connection:
+
+```php
+include_once(__DIR__ . "/database/db_connect.php");        // from index.php
+include_once(__DIR__ . "/../database/db_connect.php");     // from function/
+include_once(__DIR__ . "/../../database/db_connect.php");  // from views/users/ or views/admin/
+```
+
+A fresh clone does not include `db_connect.php`, so every copy that has to run,
+such as the one on the class server or the submitted folder, needs this setup
+too. The database server may not accept connections from a personal laptop. If
+the connection fails or times out, test on the class server.
