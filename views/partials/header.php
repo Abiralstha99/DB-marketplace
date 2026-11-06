@@ -1,3 +1,7 @@
+<?php
+// Raiyat Haque: added session and the Log In / Log Out link
+include_once("util/auth.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +23,15 @@
                 <a href="index.php">Home</a>
                 <a href="browse.php">Browse Listings</a>
                 <a href="#">Sell an Item</a>
-                <a href="#">Log In</a>
+<?php
+    if (isset($_SESSION['uid'])) {
+        print "                <span>Hi, " . $_SESSION['name'] . "</span>\n";
+        print "                <a href='logout.php'>Log Out</a>\n";
+    }
+    else {
+        print "                <a href='login.php'>Log In</a>\n";
+    }
+?>
             </div>
         </nav>    
     </header>
