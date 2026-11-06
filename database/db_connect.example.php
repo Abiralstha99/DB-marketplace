@@ -1,11 +1,12 @@
 <?php
 // Template. Copy this file to db_connect.php in this folder, then fill in $user and $pass.
 // db_connect.php is in .gitignore. Never put a real password in this template.
-$server = "cray.cs.gettysburg.edu";
+$server = "127.0.0.1";
 $dbase  = "f26_anrt";
-$user   = "YOUR_USERNAME";
-$pass   = "YOUR_PASSWORD";
-$dsn    = "mysql:host=$server;dbname=$dbase";         // data source name
+$user   = "username";
+$pass   = "password";
+$port = 3307;
+$dsn    = "mysql:host=$server;port=$port;dbname=$dbase";         // data source name
 $options = [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
              PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ];
 
