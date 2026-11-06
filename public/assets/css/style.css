@@ -323,14 +323,124 @@ body {
   text-align: left;
 }
 
-@media (max-width: 900px) {
-  .listings-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.listing-page {
+  width: min(100% - 32px, 720px);
+  margin: 0 auto;
+  padding: 48px 0 64px;
+  color: var(--primary-color);
 }
 
+.listing-page h1 {
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.listing-page > p {
+  margin-bottom: 28px;
+  color: var(--muted-color);
+}
+
+.listing-page {
+    width: min(100% - 32px, 720px);
+    margin: 0 auto;
+    padding: 48px 0 64px;
+    color: #1f2937;
+}
+
+.listing-page h1 {
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.listing-page > p {
+    margin-bottom: 28px;
+    color: #6b7280;
+}
+
+/* Form container */
+.listing-form-card {
+    padding: clamp(20px, 4vw, 36px);
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: #1f2937;
+}
+
+/* Labels */
+.listing-form-card .form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Inputs, dropdowns and textarea */
+.listing-form-card .form-control,
+.listing-form-card .form-select {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #111827;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* Description */
+.listing-form-card textarea.form-control {
+    min-height: 140px;
+    resize: vertical;
+}
+
+/* Placeholder */
+.listing-form-card .form-control::placeholder {
+    color: #9ca3af;
+}
+
+/* Focus */
+.listing-form-card .form-control:focus,
+.listing-form-card .form-select:focus {
+    background-color: #ffffff;
+    color: #111827;
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Dropdown options */
+.listing-form-card .form-select option {
+    background-color: #ffffff;
+    color: #111827;
+}
+
+/* Submit button */
+.listing-form-card .btn {
+    margin-top: 8px;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 8px;
+    background-color: var(--secondary-color);
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.listing-form-card .btn:hover {
+    background-color: var(--hover-color);
+    color: #ffffff;
+}
+
+/* Mobile */
 @media (max-width: 575px) {
-  .listings-grid {
-    grid-template-columns: 1fr;
-  }
+    .listing-page {
+        padding: 24px 0 40px;
+    }
+
+    .listing-form-card {
+        padding: 20px;
+    }
 }

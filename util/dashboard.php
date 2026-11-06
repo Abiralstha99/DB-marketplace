@@ -1,5 +1,5 @@
 <?php
-function showCategories($db){
+function showCategories($db, $category = '', $search = ''){
     $query = "SELECT name FROM categories ORDER BY name";
     $sql = $db->prepare($query);
     $sql->execute();
@@ -8,30 +8,43 @@ function showCategories($db){
     ?>
     <nav class="marketplace-categories" aria-label="Browse categories">
         <ul class="category-row">
-            <li><a class="category-pill is-active" href="index.php">All Topics</a></li>
+            <li><a class="category-pill<?= $category === '' ? ' is-active' : '' ?>" href="index.php<?= $search !== '' ? '?search_bar=' . urlencode($search) : '' ?>" <?= $category === '' ? 'aria-current="page"' : '' ?>>All Topics</a></li>
             <?php foreach ($rows as $row): ?>
-                <li><a class="category-pill" href="index.php?category=<?= urlencode($row['name']) ?>"><?= htmlspecialchars((string) $row['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a></li>
+                <li><a class="category-pill<?= $category === $row['name'] ? ' is-active' : '' ?>" href="index.php?category=<?= urlencode($row['name']) ?><?= $search !== '' ? '&amp;search_bar=' . urlencode($search) : '' ?>" <?= $category === $row['name'] ? 'aria-current="page"' : '' ?>><?= htmlspecialchars((string) $row['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a></li>
             <?php endforeach; ?>
         </ul>
     </nav>
     <?php
 }
 
-function showListings($db){
+function showListings($db, $search = '', $category = ''){
     $query = "SELECT l.listing_id, l.title, l.price, l.item_condition, l.pickup_location, l.created_at, CONCAT(u.first_name, ' ', u.last_name) AS seller_name, u.class_year
             FROM listings l
             JOIN users u
                 ON l.seller_id = u.user_id
-            WHERE l.status = 'active'
-            ORDER BY l.created_at DESC
-            LIMIT 12 OFFSET 0";
+            JOIN categories c
+                ON l.category_id = c.category_id
+            WHERE l.status = 'active'";
+    $params = [];
+    if ($search !== '') {
+
+    // .= Means concatenation 
+        $query .= " AND (l.title LIKE ? OR l.description LIKE ?)";
+        $params = ["%$search%", "%$search%"];
+    }
+
+    if ($category !== '') {
+        $query .= " AND c.name = ?";
+        $params[] = $category;
+    }
+    $query .= " ORDER BY l.created_at DESC LIMIT 12";
     $sql = $db->prepare($query);
-    $sql->execute();
+    $sql->execute($params);
 
     $rows = $sql->fetchAll();
     ?>
     <?php if (empty($rows)) { ?>
-        <p class="listings-empty">No listings available yet.</p>
+        <p class="listings-empty"><?= $search !== '' || $category !== '' ? 'No matching listings found.' : 'No listings available yet.' ?></p>
     <?php } else { ?>
         <div class="listings-grid">
             <?php foreach ($rows as $row) { ?>
