@@ -1,6 +1,6 @@
 <?php
 // Raiyat Haque: added session and the Log In / Log Out link
-include_once("util/auth.php");
+include_once(__DIR__ . "/../../util/auth.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +22,7 @@ include_once("util/auth.php");
             <div class="nav-links d-flex align-items-center gap-5">
                 <a href="index.php">Home</a>
                 <a href="browse.php">Browse Listings</a>
-                <a href="#">Sell an Item</a>
+                <a href="listings.php">Sell an Item</a>
 <?php
     if (isset($_SESSION['uid'])) {
         print "                <span>Hi, " . $_SESSION['name'] . "</span>\n";
