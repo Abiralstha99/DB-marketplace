@@ -18,7 +18,7 @@
             <div class="nav-links d-flex align-items-center gap-5">
                 <a href="index.php">Home</a>
                 <a href="browse.php">Browse Listings</a>
-                <a href="#">Sell an Item</a>
+                <a href="listings.php">Sell an Item</a>
                 <a href="#">Log In</a>
             </div>
         </nav>    

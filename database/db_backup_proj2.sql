@@ -74,33 +74,6 @@ INSERT INTO `conversations` (`conversation_id`, `listing_id`, `buyer_id`, `creat
 -- --------------------------------------------------------
 
 --
--- Table structure for table `courses`
---
-
-CREATE TABLE `courses` (
-  `course_id` int NOT NULL,
-  `department` varchar(10) NOT NULL,
-  `course_number` varchar(10) NOT NULL,
-  `title` varchar(150) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `courses`
---
-
-INSERT INTO `courses` (`course_id`, `department`, `course_number`, `title`) VALUES
-(1, 'CS', '360', 'Databases'),
-(2, 'CS', '216', 'Data Structures'),
-(3, 'MATH', '111', 'Calculus I'),
-(4, 'CHEM', '107', 'General Chemistry I'),
-(5, 'ECON', '103', 'Principles of Microeconomics'),
-(6, 'BIO', '111', 'Introductory Biology'),
-(7, 'PSYC', '101', 'General Psychology'),
-(8, 'ENG', '216', NULL);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `favorites`
 --
 
@@ -134,7 +107,6 @@ CREATE TABLE `listings` (
   `listing_id` int NOT NULL,
   `seller_id` int NOT NULL,
   `category_id` int NOT NULL,
-  `course_id` int DEFAULT NULL,
   `title` varchar(150) NOT NULL,
   `description` varchar(1000) NOT NULL,
   `price` decimal(8,2) NOT NULL,
@@ -150,17 +122,17 @@ CREATE TABLE `listings` (
 -- Dumping data for table `listings`
 --
 
-INSERT INTO `listings` (`listing_id`, `seller_id`, `category_id`, `course_id`, `title`, `description`, `price`, `item_condition`, `pickup_location`, `status`, `created_at`, `updated_at`, `sold_at`) VALUES
-(1, 3, 1, 1, 'Database Systems textbook', 'Used for CS 360 last spring. Some highlighting in the first few chapters, otherwise clean.', 45.00, 'good', 'Musselman Library', 'sold', '2026-09-01 10:15:00', '2026-09-06 15:30:00', '2026-09-06 15:30:00'),
-(2, 4, 1, 3, 'Calculus: Early Transcendentals', 'Hardcover, 8th edition. No writing inside and the spine is in great shape.', 60.00, 'like_new', 'Glatfelter Hall', 'sold', '2026-09-02 17:30:00', '2026-09-09 12:15:00', '2026-09-09 12:15:00'),
-(3, 5, 2, NULL, 'Gray futon couch', 'Folds flat into a bed. Seat is 54 inches wide. You need a car or a friend to move it.', 80.00, 'fair', 'Quarry Suites', 'sold', '2026-09-05 12:00:00', '2026-09-18 11:00:00', '2026-09-14 16:00:00'),
-(4, 6, 3, 3, 'TI-84 Plus graphing calculator', 'Works perfectly and comes with a slide cover. New batteries installed in August.', 55.00, 'good', 'College Union Building', 'sold', '2026-09-10 10:00:00', '2026-09-18 13:45:00', '2026-09-18 13:45:00'),
-(5, 7, 4, NULL, 'Gettysburg College hoodie, size M', 'Navy with orange lettering. Worn twice, it just doesn\'t fit me.', 15.00, 'like_new', 'Servo', 'sold', '2026-09-15 18:00:00', '2026-09-20 17:00:00', '2026-09-20 17:00:00'),
-(6, 3, 5, NULL, 'Mini fridge, 3.2 cu ft', 'Keeps drinks cold and has a small freezer shelf. Cleaned and ready for a new room.', 40.00, 'good', 'Hanson Hall', 'sold', '2026-09-20 14:30:00', '2026-09-28 18:30:00', '2026-09-28 18:30:00'),
-(7, 8, 7, 4, 'Lab coat and goggles set', 'Bought for General Chemistry and never used. Coat is size S.', 20.00, 'new', 'McCreary Hall', 'sold', '2026-09-25 10:00:00', '2026-10-02 14:00:00', '2026-10-02 14:00:00'),
-(8, 4, 1, 5, 'Principles of Microeconomics, 9th ed.', 'Paperback with a few notes in the margins. Access code has already been used.', 35.00, 'good', 'Musselman Library', 'active', '2026-10-26 08:15:00', '2026-10-26 08:15:00', NULL),
-(9, 6, 6, NULL, 'Desk lamp, free to a good home', 'Neck still bends, but the base is cracked. Free, just pick it up.', 0.00, 'poor', 'Hanson Hall', 'active', '2026-11-01 11:00:00', '2026-11-01 11:00:00', NULL),
-(10, 9, 3, NULL, 'Wireless earbuds, sealed box', 'Brand new and sealed. Selling for a fraction of the store price, message me fast.', 25.00, 'new', NULL, 'removed', '2026-10-10 21:00:00', '2026-10-13 09:15:00', NULL);
+INSERT INTO `listings` (`listing_id`, `seller_id`, `category_id`, `title`, `description`, `price`, `item_condition`, `pickup_location`, `status`, `created_at`, `updated_at`, `sold_at`) VALUES
+(1, 3, 1, 'Database Systems textbook', 'Used for CS 360 last spring. Some highlighting in the first few chapters, otherwise clean.', 45.00, 'good', 'Musselman Library', 'sold', '2026-09-01 10:15:00', '2026-09-06 15:30:00', '2026-09-06 15:30:00'),
+(2, 4, 1, 'Calculus: Early Transcendentals', 'Hardcover, 8th edition. No writing inside and the spine is in great shape.', 60.00, 'like_new', 'Glatfelter Hall', 'sold', '2026-09-02 17:30:00', '2026-09-09 12:15:00', '2026-09-09 12:15:00'),
+(3, 5, 2, 'Gray futon couch', 'Folds flat into a bed. Seat is 54 inches wide. You need a car or a friend to move it.', 80.00, 'fair', 'Quarry Suites', 'sold', '2026-09-05 12:00:00', '2026-09-18 11:00:00', '2026-09-14 16:00:00'),
+(4, 6, 3, 'TI-84 Plus graphing calculator', 'Works perfectly and comes with a slide cover. New batteries installed in August.', 55.00, 'good', 'College Union Building', 'sold', '2026-09-10 10:00:00', '2026-09-18 13:45:00', '2026-09-18 13:45:00'),
+(5, 7, 4, 'Gettysburg College hoodie, size M', 'Navy with orange lettering. Worn twice, it just doesn\'t fit me.', 15.00, 'like_new', 'Servo', 'sold', '2026-09-15 18:00:00', '2026-09-20 17:00:00', '2026-09-20 17:00:00'),
+(6, 3, 5, 'Mini fridge, 3.2 cu ft', 'Keeps drinks cold and has a small freezer shelf. Cleaned and ready for a new room.', 40.00, 'good', 'Hanson Hall', 'sold', '2026-09-20 14:30:00', '2026-09-28 18:30:00', '2026-09-28 18:30:00'),
+(7, 8, 7, 'Lab coat and goggles set', 'Bought for General Chemistry and never used. Coat is size S.', 20.00, 'new', 'McCreary Hall', 'sold', '2026-09-25 10:00:00', '2026-10-02 14:00:00', '2026-10-02 14:00:00'),
+(8, 4, 1, 'Principles of Microeconomics, 9th ed.', 'Paperback with a few notes in the margins. Access code has already been used.', 35.00, 'good', 'Musselman Library', 'active', '2026-10-26 08:15:00', '2026-10-26 08:15:00', NULL),
+(9, 6, 6, 'Desk lamp, free to a good home', 'Neck still bends, but the base is cracked. Free, just pick it up.', 0.00, 'poor', 'Hanson Hall', 'active', '2026-11-01 11:00:00', '2026-11-01 11:00:00', NULL),
+(10, 9, 3, 'Wireless earbuds, sealed box', 'Brand new and sealed. Selling for a fraction of the store price, message me fast.', 25.00, 'new', NULL, 'removed', '2026-10-10 21:00:00', '2026-10-13 09:15:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -436,13 +408,6 @@ ALTER TABLE `conversations`
   ADD KEY `buyer_id` (`buyer_id`);
 
 --
--- Indexes for table `courses`
---
-ALTER TABLE `courses`
-  ADD PRIMARY KEY (`course_id`),
-  ADD UNIQUE KEY `department` (`department`,`course_number`);
-
---
 -- Indexes for table `favorites`
 --
 ALTER TABLE `favorites`
@@ -456,7 +421,6 @@ ALTER TABLE `listings`
   ADD PRIMARY KEY (`listing_id`),
   ADD KEY `seller_id` (`seller_id`),
   ADD KEY `category_id` (`category_id`),
-  ADD KEY `course_id` (`course_id`),
   ADD KEY `idx_listings_status` (`status`),
   ADD KEY `idx_listings_price` (`price`),
   ADD KEY `idx_listings_created` (`created_at`);
@@ -549,12 +513,6 @@ ALTER TABLE `conversations`
   MODIFY `conversation_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT for table `courses`
---
-ALTER TABLE `courses`
-  MODIFY `course_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
 -- AUTO_INCREMENT for table `listings`
 --
 ALTER TABLE `listings`
@@ -631,8 +589,7 @@ ALTER TABLE `favorites`
 --
 ALTER TABLE `listings`
   ADD CONSTRAINT `listings_ibfk_1` FOREIGN KEY (`seller_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `listings_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`),
-  ADD CONSTRAINT `listings_ibfk_3` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`);
+  ADD CONSTRAINT `listings_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`);
 
 --
 -- Constraints for table `listing_images`
