@@ -21,5 +21,5 @@
                 <a href="#">Sell an Item</a>
                 <a href="#">Log In</a>
             </div>
-        </nav>
+        </nav>    
     </header>
