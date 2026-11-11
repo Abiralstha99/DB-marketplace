@@ -60,24 +60,28 @@ and other course-related goods.
 
 ```text
 DB-marketplace/
-├── database/            # Reserved for database files
-│   └── db_connect.example.php  # Copy to db_connect.php (not committed)
-├── function/            # Reserved for PHP functions
+├── database/
+│   ├── db_connect.example.php  # Copy to db_connect.php (not committed)
+│   ├── db_backup_proj2.sql
+│   ├── schema.sql
+│   └── seed.sql
 ├── public/
 │   ├── assets/
 │   │   ├── css/style.css
-│   │   ├── images/gettysburg-logo.png
+│   │   ├── images/
 │   │   └── js/main.js
-│   └── uploads/         # Reserved for uploaded files
+├── util/                # Shared PHP functions
 ├── views/
-│   ├── admin/           # Reserved for administrator views
 │   ├── partials/
 │   │   ├── header.php
 │   │   └── footer.php
-│   └── users/           # Reserved for user views
+│   └── users/
+├── erd.dbml
 ├── .gitignore
-├── index.php            # PHP entry point
-├── package.json         # npm dependency declaration
+├── index.php
+├── login.php
+├── logout.php
+├── package.json
 ├── package-lock.json
 └── README.md
 ```
@@ -89,14 +93,22 @@ The project is currently being set up. The PHP entry point is
 
 ## Local development
 
-Run `php -S localhost:8000` from the project root, then open
-<http://localhost:8000>.
+Configure `database/db_connect.php` as described below, then open an SSH tunnel
+to the database before starting the PHP server. Keep the tunnel running while
+using the project:
 
-The home page loads Bootstrap 6.0.0-alpha.1 CSS and its JavaScript bundle from
-jsDelivr. Custom styles in `public/assets/css/style.css` load after Bootstrap.
-The CDN requires an internet connection; no build step is needed.
-`package.json` also declares Bootstrap 5 as an npm dependency, but the current
-page uses the Bootstrap 6 CDN links rather than the npm package.
+```sh
+ssh -N -L 3307:cray.cs.gettysburg.edu:3306 <username>@cs101.cs.gettysburg.edu
+```
+
+Replace `<username>` with your CS account username. In a second terminal, run
+the local PHP server from the project root:
+
+```sh
+php -S localhost:8000
+```
+
+Then open <http://localhost:8000>.
 
 ## Database connection
 
@@ -108,18 +120,36 @@ cp database/db_connect.example.php database/db_connect.php
 ```
 
 Then set `$user` and `$pass` in the copy to your class database login. Never put
-a real password in the template.
+a real password in the template. The example connects to `127.0.0.1` on port
+`3307`; keep these values when using the SSH tunnel above. The tunnel forwards
+local port `3307` to the database server's port `3306`.
 
 To use the connection, load the file at the top of a page. It creates `$db`, a
 PDO connection:
 
 ```php
-include_once(__DIR__ . "/database/db_connect.php");        // from index.php
-include_once(__DIR__ . "/../database/db_connect.php");     // from function/
-include_once(__DIR__ . "/../../database/db_connect.php");  // from views/users/ or views/admin/
+include_once(__DIR__ . "/database/db_connect.php"); // from a project-root PHP page
 ```
 
 A fresh clone does not include `db_connect.php`, so every copy that has to run,
 such as the one on the class server or the submitted folder, needs this setup
-too. The database server may not accept connections from a personal laptop. If
-the connection fails or times out, test on the class server.
+too. When connecting from your laptop, keep the SSH tunnel running while the
+application is using the database. If the connection fails, check that the
+tunnel is active and that `db_connect.php` uses `127.0.0.1` and port `3307`.
+
+## Test accounts
+
+After importing `database/seed.sql`, use one of these sample accounts to sign in.
+The same password is used for every sample user:
+
+```text
+Password: CampusMarket-Test-2026
+
+Admin:     test.dwhitfield@gettysburg.edu
+Student:   test.alindqvist@gettysburg.edu
+Suspended: test.rbrandt@gettysburg.edu
+Banned:    test.dvasquez@gettysburg.edu
+```
+
+These credentials are for the sample data only. Never reuse this password for a
+real account.
