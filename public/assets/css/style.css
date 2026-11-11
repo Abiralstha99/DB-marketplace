@@ -6,6 +6,9 @@
   --muted-color: #59667e;
   --border-color: #aab8cc;
   --hover-color: #d94e0b;
+  /* The site is designed for a light background. Bootstrap 6 otherwise follows the
+     computer's dark mode, which turns text and inputs light on our white page. */
+  color-scheme: light;
 }
 
 body {
@@ -40,6 +43,21 @@ body {
   }
 }
 
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+  padding: 8px 48px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
 .logo img {
   width: 230px;
   height: auto;
@@ -47,8 +65,16 @@ body {
 
 .logo span {
   border-left: 1px solid var(--border-color);
-  padding-left: 30px;
+  padding-left: 24px;
   color: var(--primary-color);
+  font-weight: 700;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 32px;
 }
 
 .nav-links a {
@@ -60,6 +86,202 @@ body {
 .nav-links a:hover,
 .nav-links a.active {
   color: var(--secondary-color);
+}
+
+/* Greeting and Log In / Log Out, set apart from the page links by a divider */
+.nav-account {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-left: 32px;
+  border-left: 1px solid var(--border-color);
+}
+
+.nav-greeting {
+  color: var(--muted-color);
+  font-size: 17px;
+  white-space: nowrap;
+}
+
+.nav-greeting strong {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.nav-links a.nav-button {
+  padding: 8px 18px;
+  border: 1px solid var(--secondary-color);
+  border-radius: 10px;
+  background: var(--secondary-color);
+  color: var(--background-color);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.nav-links a.nav-button:hover {
+  border-color: var(--hover-color);
+  background: var(--hover-color);
+  color: var(--background-color);
+}
+
+.nav-links a.nav-button-outline {
+  border-color: var(--border-color);
+  background: transparent;
+  color: var(--primary-color);
+}
+
+.nav-links a.nav-button-outline:hover {
+  border-color: var(--secondary-color);
+  background: transparent;
+  color: var(--secondary-color);
+}
+
+@media (max-width: 991px) {
+  .site-nav {
+    justify-content: center;
+    padding-inline: 24px;
+  }
+
+  .nav-links {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 575px) {
+  .site-nav {
+    padding-inline: 16px;
+  }
+
+  .logo {
+    gap: 12px;
+  }
+
+  .logo img {
+    width: 150px;
+  }
+
+  .logo span {
+    padding-left: 12px;
+  }
+
+  .nav-links {
+    gap: 10px 20px;
+  }
+
+  /* on phones the account area gets its own row instead of a divider */
+  .nav-account {
+    width: 100%;
+    justify-content: center;
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+/* Log in and log out pages */
+.auth-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px 16px 64px;
+  color: var(--primary-color);
+}
+
+.auth-card {
+  width: min(100%, 420px);
+  padding: clamp(24px, 5vw, 36px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--background-color);
+  box-shadow: 0 8px 24px rgba(7, 26, 68, 0.08);
+}
+
+.auth-card-center {
+  text-align: center;
+}
+
+.auth-card h1 {
+  margin: 0 0 6px;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  margin-bottom: 24px;
+  color: var(--muted-color);
+}
+
+.auth-card .form-label {
+  margin-bottom: 6px;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.auth-card .form-control {
+  min-height: 48px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--background-color);
+  color: var(--primary-color);
+}
+
+.auth-card .form-control::placeholder {
+  color: var(--muted-color);
+}
+
+.auth-card .form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(7, 26, 68, 0.15);
+  outline: none;
+}
+
+.auth-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--secondary-color);
+  color: var(--background-color);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.auth-button:hover {
+  background: var(--hover-color);
+  color: var(--background-color);
+}
+
+.auth-button:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.auth-message {
+  width: min(100%, 420px);
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.auth-message-error {
+  border-color: #f3b8b3;
+  background: #fdecea;
+  color: #8f1d14;
+}
+
+.auth-message-success {
+  border-color: #b4dcc3;
+  background: #e8f5ee;
+  color: #14532d;
 }
 
 .marketplace-dashboard {
