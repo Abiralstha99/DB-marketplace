@@ -123,3 +123,54 @@ A fresh clone does not include `db_connect.php`, so every copy that has to run,
 such as the one on the class server or the submitted folder, needs this setup
 too. The database server may not accept connections from a personal laptop. If
 the connection fails or times out, test on the class server.
+
+## Local database (Docker)
+
+The class server's database is often unreachable from a laptop, even on campus.
+For day-to-day work, run a local copy in Docker. It is MySQL 8.0 (the same
+version as the class server), uses the same database name, `f26_anrt`, and is
+loaded from `database/db_backup_proj2.sql`, so everyone starts from the same
+data.
+
+1. Install and open [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+2. Start the database from the project root:
+
+   ```sh
+   docker compose up -d
+   ```
+
+3. In your `database/db_connect.php`, use the local login from
+   `docker-compose.yml`:
+
+   ```php
+   $server = "127.0.0.1";
+   $port   = 3307;
+   $user   = "marketplace";
+   $pass   = "marketplace-dev";
+   $dsn    = "mysql:host=$server;port=$port;dbname=$dbase";
+   ```
+
+4. Run `php -S localhost:8000` and log in with a test account from
+   `database/seed.sql` (password `CampusMarket-Test-2026`).
+
+The local database only listens on this computer, so its login is not a secret
+and is not your class server login.
+
+To reset your local data to the committed backup, for example after a teammate
+changes the schema:
+
+```sh
+docker compose down -v && docker compose up -d
+```
+
+`docker compose down` without `-v` stops the database and keeps your data.
+
+### Changing the schema
+
+`database/db_backup_proj2.sql` is the shared source of truth for tables and
+sample data. To change a table, edit that file in a pull request, reset your
+local database to test it, and after merging apply the same change to the class
+server database. Teammates pick it up by pulling and resetting.
+
+Use port 3307 for only one thing at a time: either this container or an SSH
+tunnel to the class server.
