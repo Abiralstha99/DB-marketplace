@@ -8,27 +8,30 @@ session_start();
 
 // shows login form
 // action is performed in login.php
-function showLoginForm() {
+// $email refills the email box after a failed login
+function showLoginForm($email = "") {
+    $email = htmlspecialchars($email, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 ?>
-    <DIV class="container py-5">
-    <H2>Log In</H2>
+    <div class="auth-card">
+    <h1>Log In</h1>
+    <p class="auth-subtitle">Use your Gettysburg email to buy and sell on campus.</p>
 
-    <FORM name='fmLogin' method='POST' action='login.php'>
+    <form name='fmLogin' method='POST' action='login.php'>
 
-    <P>
-    <LABEL for='email'>Email</LABEL><BR>
-    <INPUT type='email' name='email' id='email' placeholder='you@gettysburg.edu' required />
-    </P>
+    <div class="mb-3">
+    <label class="form-label" for='email'>Email</label>
+    <input class="form-control" type='email' name='email' id='email' placeholder='you@gettysburg.edu' value='<?= $email ?>' autocomplete='username' required />
+    </div>
 
-    <P>
-    <LABEL for='password'>Password</LABEL><BR>
-    <INPUT type='password' name='password' id='password' required />
-    </P>
+    <div class="mb-3">
+    <label class="form-label" for='password'>Password</label>
+    <input class="form-control" type='password' name='password' id='password' autocomplete='current-password' required />
+    </div>
 
-    <INPUT type='submit' value='Log In' />
+    <button class="auth-button" type='submit'>Log In</button>
 
-    </FORM>
-    </DIV>
+    </form>
+    </div>
 <?php
 }
 
