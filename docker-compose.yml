@@ -1,0 +1,31 @@
+# Local MySQL for development. Same database name as the class server (f26_anrt)
+# and the same MySQL major version (8.0), loaded from database/db_backup_proj2.sql.
+#
+#   docker compose up -d                 start (first start loads the backup)
+#   docker compose down                  stop, keep data
+#   docker compose down -v && docker compose up -d   reset to the committed backup
+#
+# The login below is for this local container only and is reachable only from
+# this computer (bound to 127.0.0.1). It is not the class server login.
+services:
+  db:
+    image: mysql:8.0
+    container_name: marketplace-db
+    environment:
+      MYSQL_DATABASE: f26_anrt
+      MYSQL_USER: marketplace
+      MYSQL_PASSWORD: marketplace-dev
+      MYSQL_ROOT_PASSWORD: marketplace-root-dev
+    ports:
+      - "127.0.0.1:3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./database/db_backup_proj2.sql:/docker-entrypoint-initdb.d/01-backup.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-umarketplace", "-pmarketplace-dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  db-data:
