@@ -9,6 +9,14 @@ logoutUser();
 header("refresh:2;url=index.php");
 
 include("views/partials/header.php");
-print "<DIV class='container pt-4'><P><B>You are logged out</B></P></DIV>\n";
+?>
+<main class="auth-page">
+    <div class="auth-card auth-card-center">
+        <h1>You are logged out</h1>
+        <p class="auth-subtitle">Taking you back to the home page...</p>
+        <a class="auth-button" href="index.php">Back to home</a>
+    </div>
+</main>
+<?php
 include("views/partials/footer.php");
 ?>

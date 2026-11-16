@@ -6,6 +6,8 @@ include_once("database/db_connect.php");
 include_once("util/auth.php");
 
 $message = "";
+$isError = false;   // error messages are shown in red, others in green
+$email   = "";
 
 if (isset($_SESSION['uid'])) {
     // already logged in
@@ -26,18 +28,25 @@ else if (isset($_POST['email'])) {
     }
     else {
         $message = $error;
+        $isError = true;
     }
 }
 
 include("views/partials/header.php");
 
+print "<main class='auth-page'>\n";
+
 if ($message != "") {
-    print "<DIV class='container pt-4'><P><B>$message</B></P></DIV>\n";
+    $class = $isError ? "auth-message auth-message-error" : "auth-message auth-message-success";
+    $role  = $isError ? "alert" : "status";
+    print "<p class='$class' role='$role'>" . htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</p>\n";
 }
 
 if (!isset($_SESSION['uid'])) {
-    showLoginForm();
+    showLoginForm(is_string($email) ? $email : "");
 }
+
+print "</main>\n";
 
 include("views/partials/footer.php");
 ?>
