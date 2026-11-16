@@ -1,4 +1,9 @@
 <?php
+if (!defined('MARKETPLACE_ROUTED')) {
+    http_response_code(403);
+    exit;
+}
+
 require_once __DIR__ . '/../../util/dashboard.php';
 $search = is_string($_GET['search_bar'] ?? null) ? trim($_GET['search_bar']) : '';
 $category = is_string($_GET['category'] ?? null) ? trim($_GET['category']) : '';
@@ -35,7 +40,7 @@ $category = is_string($_GET['category'] ?? null) ? trim($_GET['category']) : '';
         </div>
         <div class="recent-listings-actions">
             <a href="browse.php">View all</a>
-            <a class="recent-listings-post" href="views/users/listings.php">
+            <a class="recent-listings-post" href="index.php?action=addListing">
                 <span aria-hidden="true">+</span> 
                 Post an Item
             </a>

@@ -6,7 +6,7 @@ function addListings($db, $data = [], $token = ''){
 
     $rows = $sql->fetchAll();
     ?>
-    <form method="post" action="listings.php">
+    <form method="post" action="index.php?action=addListing">
         <input type="hidden" name="listing_token" value="<?= htmlspecialchars($token, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <div class="mb-3">
             <label class="form-label" for="listing-title">Title</label>
