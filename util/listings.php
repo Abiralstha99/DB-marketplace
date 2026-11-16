@@ -1,21 +1,11 @@
 <?php
-function addListings($db, $errors = [], $data = [], $token = ''){
+function addListings($db, $data = [], $token = ''){
     $query = "SELECT category_id, name FROM categories ORDER BY name";
     $sql = $db->prepare($query);
     $sql->execute();
 
     $rows = $sql->fetchAll();
     ?>
-    <?php if ($errors): ?>
-        <div class="alert alert-danger" role="alert">
-            <p>Please check your listing:</p>
-            <ul>
-                <?php foreach ($errors as $error): ?>
-                    <li><?= htmlspecialchars($error, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
     <form method="post" action="listings.php">
         <input type="hidden" name="listing_token" value="<?= htmlspecialchars($token, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <div class="mb-3">

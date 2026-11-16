@@ -23,15 +23,15 @@ include_once(__DIR__ . "/../../util/auth.php");
                 <a href="index.php">Home</a>
                 <a href="browse.php">Browse Listings</a>
                 <a href="listings.php">Sell an Item</a>
-<?php
-    if (isset($_SESSION['uid'])) {
-        print "                <span>Hi, " . $_SESSION['name'] . "</span>\n";
-        print "                <a href='logout.php'>Log Out</a>\n";
-    }
-    else {
-        print "                <a href='login.php'>Log In</a>\n";
-    }
-?>
+                <?php
+                    if (isset($_SESSION['uid'])) {
+                        print "<span>Hi, " . $_SESSION['name'] . "</span>\n";
+                        print "<a href='logout.php'>Log Out</a>\n";
+                    }
+                    else {
+                        print "<a href='login.php'>Log In</a>\n";
+                    }
+                ?>
             </div>
         </nav>    
     </header>
