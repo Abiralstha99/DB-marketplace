@@ -26,7 +26,6 @@ Table users {
   user_id int [pk, increment]
   // unique: no two rows can have the same value here, so two users cannot share an email.
   // It makes email a candidate key while user_id stays the primary key.
-  // With two columns, as in courses below, only the pair has to be different.
   email varchar(255) [not null, unique, note: 'School email']
   password_hash varchar(255) [not null]
   first_name varchar(100) [not null]
@@ -65,24 +64,10 @@ Table categories {
   name varchar(100) [not null, unique, note: 'e.g. Textbooks, Electronics, Lab Supplies']
 }
 
-Table courses {
-  course_id int [pk, increment]
-  department varchar(10) [not null, note: 'e.g. CS']
-  course_number varchar(10) [not null, note: 'e.g. 340']
-  title varchar(150) [null]
-
-  Indexes {
-    (department, course_number) [unique]
-  }
-
-  Note: 'Lookup table so "CS 340", "cs340" and "CS-340" are one course.'
-}
-
 Table listings {
   listing_id int [pk, increment]
   seller_id int [not null, ref: > users.user_id]
   category_id int [not null, ref: > categories.category_id]
-  course_id int [null, ref: > courses.course_id, note: 'Not every item is tied to a course']
   title varchar(150) [not null]
   description varchar(1000) [not null]
   price decimal(8,2) [not null, note: '0.00 = free']
