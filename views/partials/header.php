@@ -21,7 +21,7 @@ include_once(__DIR__ . "/../../util/auth.php");
 
             <div class="nav-links">
                 <a href="index.php">Home</a>
-                <a href="browse.php">Browse Listings</a>
+                <a href="index.php?action=myListings">My Listings</a>
                 <a href="index.php?action=addListing">Sell an Item</a>
 
                 <!-- greeting and Log In / Log Out sit together, set apart from the page links -->
