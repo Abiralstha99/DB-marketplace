@@ -4,6 +4,7 @@
 
 include_once("util/auth.php");
 
+requireLogin();
 logoutUser();
 
 header("refresh:2;url=index.php");

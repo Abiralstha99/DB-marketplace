@@ -43,48 +43,37 @@ INSERT INTO categories (category_id, name) VALUES
   (6, 'Free Stuff'),
   (7, 'Lab Supplies');
 
--- 8 courses
-INSERT INTO courses (course_id, department, course_number, title) VALUES
-  (1, 'CS',   '360', 'Databases'),
-  (2, 'CS',   '216', 'Data Structures'),
-  (3, 'MATH', '111', 'Calculus I'),
-  (4, 'CHEM', '107', 'General Chemistry I'),
-  (5, 'ECON', '103', 'Principles of Microeconomics'),
-  (6, 'BIO',  '111', 'Introductory Biology'),
-  (7, 'PSYC', '101', 'General Psychology'),
-  (8, 'ENG',  '216', NULL);
-
 -- 20 listings: 7 sold, 12 active, 1 removed by an admin
 -- Listing 9 is free, so its price is 0.
 INSERT INTO listings
-  (listing_id, seller_id, category_id, course_id, title, description, price, item_condition, pickup_location, status, created_at, updated_at, sold_at)
+  (listing_id, seller_id, category_id, title, description, price, item_condition, pickup_location, status, created_at, updated_at, sold_at)
 VALUES
-  (1,  3, 1, 1,    'Database Systems textbook',            'Used for CS 360 last spring. Some highlighting in the first few chapters, otherwise clean.', 45.00, 'good',     'Musselman Library',      'sold',    '2026-09-01 10:15:00', '2026-09-06 15:30:00', '2026-09-06 15:30:00'),
-  (2,  4, 1, 3,    'Calculus: Early Transcendentals',      'Hardcover, 8th edition. No writing inside and the spine is in great shape.',                 60.00, 'like_new', 'Glatfelter Hall',        'sold',    '2026-09-02 17:30:00', '2026-09-09 12:15:00', '2026-09-09 12:15:00'),
-  (3,  5, 2, NULL, 'Gray futon couch',                     'Folds flat into a bed. Seat is 54 inches wide. You need a car or a friend to move it.',      80.00, 'fair',     'Quarry Suites',          'sold',    '2026-09-05 12:00:00', '2026-09-18 11:00:00', '2026-09-14 16:00:00'),
-  (4,  6, 3, 3,    'TI-84 Plus graphing calculator',       'Works perfectly and comes with a slide cover. New batteries installed in August.',           55.00, 'good',     'College Union Building', 'sold',    '2026-09-10 10:00:00', '2026-09-18 13:45:00', '2026-09-18 13:45:00'),
-  (5,  7, 4, NULL, 'Gettysburg College hoodie, size M',    'Navy with orange lettering. Worn twice, it just doesn''t fit me.',                           15.00, 'like_new', 'Servo',                  'sold',    '2026-09-15 18:00:00', '2026-09-20 17:00:00', '2026-09-20 17:00:00'),
-  (6,  3, 5, NULL, 'Mini fridge, 3.2 cu ft',               'Keeps drinks cold and has a small freezer shelf. Cleaned and ready for a new room.',         40.00, 'good',     'Hanson Hall',            'sold',    '2026-09-20 14:30:00', '2026-09-28 18:30:00', '2026-09-28 18:30:00'),
-  (7,  8, 7, 4,    'Lab coat and goggles set',             'Bought for General Chemistry and never used. Coat is size S.',                               20.00, 'new',      'McCreary Hall',          'sold',    '2026-09-25 10:00:00', '2026-10-02 14:00:00', '2026-10-02 14:00:00'),
-  (8,  4, 1, 5,    'Principles of Microeconomics, 9th ed.', 'Paperback with a few notes in the margins. Access code has already been used.',             35.00, 'good',     'Musselman Library',      'active',  '2026-10-26 08:15:00', '2026-10-26 08:15:00', NULL),
-  (9,  6, 6, NULL, 'Desk lamp, free to a good home',       'Neck still bends, but the base is cracked. Free, just pick it up.',                           0.00, 'poor',    'Hanson Hall',            'active',  '2026-11-01 11:00:00', '2026-11-01 11:00:00', NULL),
-  (10, 9, 3, NULL, 'Wireless earbuds, sealed box',         'Brand new and sealed. Selling for a fraction of the store price, message me fast.',          25.00, 'new',      NULL,                     'removed', '2026-10-10 21:00:00', '2026-10-13 09:15:00', NULL);
+  (1,  3, 1, 'Database Systems textbook',            'Used for CS 360 last spring. Some highlighting in the first few chapters, otherwise clean.', 45.00, 'good',     'Musselman Library',      'sold',    '2026-09-01 10:15:00', '2026-09-06 15:30:00', '2026-09-06 15:30:00'),
+  (2,  4, 1, 'Calculus: Early Transcendentals',      'Hardcover, 8th edition. No writing inside and the spine is in great shape.',                 60.00, 'like_new', 'Glatfelter Hall',        'sold',    '2026-09-02 17:30:00', '2026-09-09 12:15:00', '2026-09-09 12:15:00'),
+  (3,  5, 2, 'Gray futon couch',                     'Folds flat into a bed. Seat is 54 inches wide. You need a car or a friend to move it.',      80.00, 'fair',     'Quarry Suites',          'sold',    '2026-09-05 12:00:00', '2026-09-18 11:00:00', '2026-09-14 16:00:00'),
+  (4,  6, 3, 'TI-84 Plus graphing calculator',       'Works perfectly and comes with a slide cover. New batteries installed in August.',           55.00, 'good',     'College Union Building', 'sold',    '2026-09-10 10:00:00', '2026-09-18 13:45:00', '2026-09-18 13:45:00'),
+  (5,  7, 4, 'Gettysburg College hoodie, size M',    'Navy with orange lettering. Worn twice, it just doesn''t fit me.',                           15.00, 'like_new', 'Servo',                  'sold',    '2026-09-15 18:00:00', '2026-09-20 17:00:00', '2026-09-20 17:00:00'),
+  (6,  3, 5, 'Mini fridge, 3.2 cu ft',               'Keeps drinks cold and has a small freezer shelf. Cleaned and ready for a new room.',         40.00, 'good',     'Hanson Hall',            'sold',    '2026-09-20 14:30:00', '2026-09-28 18:30:00', '2026-09-28 18:30:00'),
+  (7,  8, 7, 'Lab coat and goggles set',             'Bought for General Chemistry and never used. Coat is size S.',                               20.00, 'new',      'McCreary Hall',          'sold',    '2026-09-25 10:00:00', '2026-10-02 14:00:00', '2026-10-02 14:00:00'),
+  (8,  4, 1, 'Principles of Microeconomics, 9th ed.', 'Paperback with a few notes in the margins. Access code has already been used.',             35.00, 'good',     'Musselman Library',      'active',  '2026-10-26 08:15:00', '2026-10-26 08:15:00', NULL),
+  (9,  6, 6, 'Desk lamp, free to a good home',       'Neck still bends, but the base is cracked. Free, just pick it up.',                           0.00, 'poor',    'Hanson Hall',            'active',  '2026-11-01 11:00:00', '2026-11-01 11:00:00', NULL),
+  (10, 9, 3, 'Wireless earbuds, sealed box',         'Brand new and sealed. Selling for a fraction of the store price, message me fast.',          25.00, 'new',      NULL,                     'removed', '2026-10-10 21:00:00', '2026-10-13 09:15:00', NULL);
 
 -- Additional active listings for browsing
 INSERT INTO listings
-  (seller_id, category_id, course_id, title, description, price,
+  (seller_id, category_id, title, description, price,
    item_condition, pickup_location, status, created_at, updated_at)
 VALUES
-  (3, 1, 1, 'Database Systems textbook', 'Good condition with a few highlighted pages.', 35.00, 'good', 'Musselman Library', 'active', NOW(), NOW()),
-  (4, 2, NULL, 'Wooden desk chair', 'Comfortable chair with a few scratches on the legs.', 25.00, 'good', 'Hanson Hall', 'active', NOW(), NOW()),
-  (5, 3, NULL, 'Wireless keyboard and mouse', 'Both work well and include USB receivers.', 20.00, 'good', 'College Union Building', 'active', NOW(), NOW()),
-  (6, 5, NULL, 'Mini fridge', 'Clean 3.2 cubic foot fridge with a small freezer compartment.', 45.00, 'good', 'Quarry Suites', 'active', NOW(), NOW()),
-  (7, 4, NULL, 'Gettysburg College sweatshirt', 'Size medium, navy blue, worn only a few times.', 18.00, 'like_new', 'Servo', 'active', NOW(), NOW()),
-  (8, 7, 4, 'Chemistry lab coat and goggles', 'Size medium lab coat and a pair of safety goggles.', 15.00, 'good', 'McCreary Hall', 'active', NOW(), NOW()),
-  (3, 6, NULL, 'Free storage bins', 'Three plastic storage bins available for pickup.', 0.00, 'fair', 'Hanson Hall', 'active', NOW(), NOW()),
-  (4, 1, 3, 'Calculus textbook', 'Paperback textbook with some notes in pencil.', 30.00, 'fair', 'Glatfelter Hall', 'active', NOW(), NOW()),
-  (5, 3, NULL, 'Desk lamp with USB port', 'Adjustable LED lamp in working condition.', 12.00, 'good', 'Musselman Library', 'active', NOW(), NOW()),
-  (6, 2, NULL, 'Small bookshelf', 'Three-shelf bookcase, easy to carry and already assembled.', 20.00, 'good', 'College Union Building', 'active', NOW(), NOW());
+  (3, 1, 'Database Systems textbook', 'Good condition with a few highlighted pages.', 35.00, 'good', 'Musselman Library', 'active', NOW(), NOW()),
+  (4, 2, 'Wooden desk chair', 'Comfortable chair with a few scratches on the legs.', 25.00, 'good', 'Hanson Hall', 'active', NOW(), NOW()),
+  (5, 3, 'Wireless keyboard and mouse', 'Both work well and include USB receivers.', 20.00, 'good', 'College Union Building', 'active', NOW(), NOW()),
+  (6, 5, 'Mini fridge', 'Clean 3.2 cubic foot fridge with a small freezer compartment.', 45.00, 'good', 'Quarry Suites', 'active', NOW(), NOW()),
+  (7, 4, 'Gettysburg College sweatshirt', 'Size medium, navy blue, worn only a few times.', 18.00, 'like_new', 'Servo', 'active', NOW(), NOW()),
+  (8, 7, 'Chemistry lab coat and goggles', 'Size medium lab coat and a pair of safety goggles.', 15.00, 'good', 'McCreary Hall', 'active', NOW(), NOW()),
+  (3, 6, 'Free storage bins', 'Three plastic storage bins available for pickup.', 0.00, 'fair', 'Hanson Hall', 'active', NOW(), NOW()),
+  (4, 1, 'Calculus textbook', 'Paperback textbook with some notes in pencil.', 30.00, 'fair', 'Glatfelter Hall', 'active', NOW(), NOW()),
+  (5, 3, 'Desk lamp with USB port', 'Adjustable LED lamp in working condition.', 12.00, 'good', 'Musselman Library', 'active', NOW(), NOW()),
+  (6, 2, 'Small bookshelf', 'Three-shelf bookcase, easy to carry and already assembled.', 20.00, 'good', 'College Union Building', 'active', NOW(), NOW());
 
 -- 10 listing images: paths are placeholders, relative to public/uploads/
 INSERT INTO listing_images (image_id, listing_id, file_path, sort_order, uploaded_at) VALUES

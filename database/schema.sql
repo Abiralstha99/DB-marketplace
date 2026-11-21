@@ -16,7 +16,6 @@ CREATE TABLE users (
   last_login_at    DATETIME,
   -- UNIQUE: no two rows can have the same value here, so two users cannot share an email.
   -- It makes email a candidate key while user_id stays the primary key.
-  -- With two columns, as in courses below, only the pair has to be different.
   UNIQUE (email)
 );
 
@@ -28,19 +27,10 @@ CREATE TABLE categories (
   UNIQUE (name)
 );
 
-CREATE TABLE courses (
-  course_id      INT AUTO_INCREMENT PRIMARY KEY,
-  department     VARCHAR(10) NOT NULL,      -- e.g. CS
-  course_number  VARCHAR(10) NOT NULL,      -- e.g. 360
-  title          VARCHAR(150),
-  UNIQUE (department, course_number)
-);
-
 CREATE TABLE listings (
   listing_id       INT AUTO_INCREMENT PRIMARY KEY,
   seller_id        INT NOT NULL,
   category_id      INT NOT NULL,
-  course_id        INT,                     -- not every item is tied to a course
   title            VARCHAR(150) NOT NULL,
   description      VARCHAR(1000) NOT NULL,
   price            DECIMAL(8,2) NOT NULL,   -- up to 8 digits, 2 after the decimal point, 0.00 = free
@@ -51,11 +41,10 @@ CREATE TABLE listings (
   updated_at       DATETIME NOT NULL,
   sold_at          DATETIME,
   -- FOREIGN KEY: the value here must match a primary key in the table it REFERENCES,
-  -- or be NULL if the column allows it. So seller_id must be a real user, and course_id
-  -- can be empty. MySQL also refuses to delete a row that other rows still point to.
+  -- or be NULL if the column allows it. MySQL also refuses to delete a row
+  -- that other rows still point to.
   FOREIGN KEY (seller_id) REFERENCES users(user_id),
-  FOREIGN KEY (category_id) REFERENCES categories(category_id),
-  FOREIGN KEY (course_id) REFERENCES courses(course_id)
+  FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
 
 CREATE TABLE listing_images (

@@ -9,15 +9,14 @@ and other course-related goods.
 
 1. **Create and manage listings**
    - Create listings for items they want to sell.
-   - Add a title, description, price, condition, category, course number, and
-     images.
+   - Add a title, description, price, condition, category, and images.
    - Edit or remove their own listings.
    - Mark listings as sold.
 
 2. **Search and browse listings**
    - Browse available listings.
    - Search by keyword.
-   - Filter by category, price range, condition, or course number.
+   - Filter by category, price range, or condition.
    - Sort results by newest or lowest price.
 
 3. **Make and respond to offers**

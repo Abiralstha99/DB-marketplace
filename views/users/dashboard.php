@@ -1,9 +1,19 @@
 <?php
+if (!defined('MARKETPLACE_ROUTED')) {
+    http_response_code(403);
+    exit;
+}
+
 require_once __DIR__ . '/../../util/dashboard.php';
 $search = is_string($_GET['search_bar'] ?? null) ? trim($_GET['search_bar']) : '';
 $category = is_string($_GET['category'] ?? null) ? trim($_GET['category']) : '';
+$listingSuccess = $_SESSION['listing_success'] ?? null;
+unset($_SESSION['listing_success']);
 ?>
 <main class="marketplace-dashboard">
+    <?php if ($listingSuccess !== null): ?>
+        <p role="status"><?= htmlspecialchars($listingSuccess, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+    <?php endif; ?>
     <section class="text-center marketplace-hero">
         <h1 class="display-4 fw-bold">Buy, sell, and trade on campus</h1>
         <p class="lead">Find great deals from fellow Gettysburg students — no shipping, just a quick meetup.</p>
@@ -35,7 +45,7 @@ $category = is_string($_GET['category'] ?? null) ? trim($_GET['category']) : '';
         </div>
         <div class="recent-listings-actions">
             <a href="browse.php">View all</a>
-            <a class="recent-listings-post" href="views/users/listings.php">
+            <a class="recent-listings-post" href="index.php?action=addListing">
                 <span aria-hidden="true">+</span> 
                 Post an Item
             </a>

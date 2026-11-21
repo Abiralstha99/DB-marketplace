@@ -1,4 +1,5 @@
 <?php
+// Show the category links for browsing listings.
 function showCategories($db, $category = '', $search = ''){
     $query = "SELECT name FROM categories ORDER BY name";
     $sql = $db->prepare($query);
