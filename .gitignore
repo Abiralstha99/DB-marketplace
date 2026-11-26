@@ -7,6 +7,10 @@
 /skills-lock.json
 AGENTS.md
 
+# Environment variable
+.env 
+vendor/
+
 # Project-local documentation
 /docs/
 
