@@ -469,6 +469,7 @@ body {
 .listings-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: 20px;
   padding: 0 20px;
   text-align: left;
@@ -482,6 +483,27 @@ body {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: var(--background-color);
+}
+
+.listing-card-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface-color);
+  color: var(--muted-color);
+}
+
+.listing-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 
 .listing-condition {
