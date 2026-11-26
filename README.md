@@ -139,9 +139,9 @@ the connection fails or times out, test on the class server.
 
 The class server's database is often unreachable from a laptop, even on campus.
 For day-to-day work, run a local copy in Docker. It is MySQL 8.0 (the same
-version as the class server), uses the same database name, `f26_anrt`, and is
-loaded from `database/db_backup_proj2.sql`, so everyone starts from the same
-data.
+version as the class server) and uses the same database name, `f26_anrt`.
+On first start with an empty volume, Docker imports `database/schema.sql`
+followed by `database/seed.sql`.
 
 1. Install and open [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 2. Start the database from the project root:
@@ -167,8 +167,7 @@ data.
 The local database only listens on this computer, so its login is not a secret
 and is not your class server login.
 
-To reset your local data to the committed backup, for example after a teammate
-changes the schema:
+To discard your local data and reinitialize from the committed schema and seed:
 
 ```sh
 docker compose down -v && docker compose up -d
@@ -178,10 +177,17 @@ docker compose down -v && docker compose up -d
 
 ### Changing the schema
 
-`database/db_backup_proj2.sql` is the shared source of truth for tables and
-sample data. To change a table, edit that file in a pull request, reset your
-local database to test it, and after merging apply the same change to the class
-server database. Teammates pick it up by pulling and resetting.
+`database/schema.sql` and `erd.dbml` define the current schema. SQL migrations
+in `database/migrations/` update databases created from earlier versions.
+
+For an existing Docker volume with the legacy image table, start the database
+and run this migration once from the project root. It removes the old image
+placeholders and preserves existing listings.
+
+```sh
+docker compose exec -T db sh -c 'MYSQL_PWD="$MYSQL_PASSWORD" mysql -u "$MYSQL_USER" "$MYSQL_DATABASE"' \
+  < database/migrations/20261126_cloudinary_listing_images.sql
+```
 
 Use port 3307 for only one thing at a time: either this container or an SSH
 tunnel to the class server.
