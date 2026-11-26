@@ -28,33 +28,79 @@ require_once __DIR__ . '/util/listings.php';
 define('MARKETPLACE_ROUTED', true);
 
 $sellerId = $_SESSION['uid'];
-$errors = [];
-$data = [];
-if ($action === 'addListing') {
-    if ($isPost) {
-        $data = $_POST;
-        $errors = validateListing($db, $data);
-        if ($errors === []) {
-            createListing($db, $data, $sellerId);
-            $_SESSION['listing_success'] = 'Your item has been posted.';
-            header('Location: index.php');
-            exit;
-        }
-    }
-    $categories = getListingCategories($db);
-} elseif ($action === 'myListings') {
-    $listings = getSellerListings($db, $sellerId);
-    $listingManagementSuccess = $_SESSION['listing_management_success'] ?? null;
-    unset($_SESSION['listing_management_success']);
-} elseif ($action === 'editListing' || $action === 'deleteListing') {
+if ($action === 'editListing' || $action === 'deleteListing') {
     $input = $action === 'editListing' ? $_GET : $_POST;
     $listingId = filter_var($input['listing_id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
     if ($listingId === false) {
         http_response_code(404);
         exit('Listing not found.');
     }
+}
 
-    if ($action === 'deleteListing') {
+switch ($action) {
+    case 'dashboard':
+        require_once __DIR__ . '/util/dashboard.php';
+        $search = is_string($_GET['search_bar'] ?? null) ? trim($_GET['search_bar']) : '';
+        $category = is_string($_GET['category'] ?? null) ? trim($_GET['category']) : '';
+        $categories = getListingCategories($db);
+        $listings = getDashboardListings($db, $search, $category);
+        $listingSuccess = $_SESSION['listing_success'] ?? null;
+        unset($_SESSION['listing_success']);
+        break;
+
+    case 'addListing':
+        $data = [];
+        $errors = [];
+        if ($isPost) {
+            $data = $_POST;
+            $photo = $_FILES['image'] ?? null;
+            $errors = validateListing($db, $data, $photo);
+            if ($errors === []) {
+                $errors = createListing($db, $data, $sellerId, $photo);
+            }
+            if ($errors === []) {
+                $_SESSION['listing_success'] = 'Your item has been posted.';
+                header('Location: index.php');
+                exit;
+            }
+        }
+        $categories = getListingCategories($db);
+        $formOptions = [];
+        break;
+
+    case 'myListings':
+        $listings = getSellerListings($db, $sellerId);
+        $listingManagementSuccess = $_SESSION['listing_management_success'] ?? null;
+        unset($_SESSION['listing_management_success']);
+        break;
+
+    case 'editListing':
+        $data = getOwnedListing($db, $listingId, $sellerId);
+        if ($data === false) {
+            http_response_code(404);
+            exit('Listing not found.');
+        }
+
+        $errors = [];
+        if ($isPost) {
+            $data = $_POST;
+            $errors = validateListing($db, $data);
+            if ($errors === []) {
+                $updated = updateOwnedListing($db, $listingId, $sellerId, $data);
+                if ($updated === 0 && getOwnedListing($db, $listingId, $sellerId) === false) {
+                    http_response_code(404);
+                    exit('Listing not found.');
+                }
+                $_SESSION['listing_management_success'] = 'Your listing has been updated.';
+                header('Location: index.php?action=myListings', true, 303);
+                exit;
+            }
+        }
+        $categories = getListingCategories($db);
+        $formOptions = ["index.php?action=editListing&listing_id=$listingId", 'Edit Listing', 'Save changes'];
+        break;
+
+    case 'deleteListing':
         if (!softDeleteOwnedListing($db, $listingId, $sellerId)) {
             http_response_code(404);
             exit('Listing not found.');
@@ -62,36 +108,11 @@ if ($action === 'addListing') {
         $_SESSION['listing_management_success'] = 'Your listing has been deleted.';
         header('Location: index.php?action=myListings', true, 303);
         exit;
-    }
-
-    $data = getOwnedListing($db, $listingId, $sellerId);
-    if ($data === false) {
-        http_response_code(404);
-        exit('Listing not found.');
-    }
-
-    if ($isPost) {
-        $data = $_POST;
-        $errors = validateListing($db, $data);
-        if ($errors === []) {
-            $updated = updateOwnedListing($db, $listingId, $sellerId, $data);
-            if ($updated === 0 && getOwnedListing($db, $listingId, $sellerId) === false) {
-                http_response_code(404);
-                exit('Listing not found.');
-            }
-            $_SESSION['listing_management_success'] = 'Your listing has been updated.';
-            header('Location: index.php?action=myListings', true, 303);
-            exit;
-        }
-    }
-    $categories = getListingCategories($db);
 }
 
 require __DIR__ . '/views/partials/header.php';
 require $routes[$action];
-if ($action === 'addListing') {
-    createListingForm($categories, $data, $errors);
-} elseif ($action === 'editListing') {
-    createListingForm($categories, $data, $errors, "index.php?action=editListing&listing_id=$listingId", 'Edit Listing', 'Save changes');
+if (isset($formOptions)) {
+    createListingForm($categories, $data, $errors, ...$formOptions);
 }
 require __DIR__ . '/views/partials/footer.php';

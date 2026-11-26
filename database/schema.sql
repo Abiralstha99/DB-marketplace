@@ -48,11 +48,12 @@ CREATE TABLE listings (
 );
 
 CREATE TABLE listing_images (
-  image_id     INT AUTO_INCREMENT PRIMARY KEY,
-  listing_id   INT NOT NULL,
-  file_path    VARCHAR(255) NOT NULL,       -- relative to public/uploads/
-  sort_order   INT NOT NULL,                -- 0 = thumbnail
-  uploaded_at  DATETIME NOT NULL,
+  image_id              INT AUTO_INCREMENT PRIMARY KEY,
+  listing_id            INT NOT NULL,
+  file_path             VARCHAR(2048) NOT NULL, -- Cloudinary HTTPS URL
+  cloudinary_public_id  VARCHAR(255) NOT NULL,
+  uploaded_at           DATETIME NOT NULL,
+  CONSTRAINT uq_listing_images_listing_id UNIQUE (listing_id),
   FOREIGN KEY (listing_id) REFERENCES listings(listing_id)
 );
 

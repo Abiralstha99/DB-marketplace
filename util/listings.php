@@ -1,6 +1,6 @@
 <?php
 // Check the listing form and return any errors.
-function validateListing($db, $data) {
+function validateListing($db, $data, $photo = null) {
     $errors = [];
     foreach (['title' => 150, 'description' => 1000] as $field => $limit) {
         $value = $data[$field] ?? null;
@@ -31,16 +31,39 @@ function validateListing($db, $data) {
         $errors[] = 'Select a valid condition.';
     }
 
-    $pickup = $data['pickup_location'] ?? '';
+    $pickup = $data['pickup_location'] ?? null;
     if (!is_string($pickup) || mb_strlen(trim($pickup)) > 100) {
         $errors[] = 'Pickup location must be at most 100 characters.';
+    }
+
+    if ($photo === null || $photo['error'] === UPLOAD_ERR_NO_FILE) {
+        return $errors;
+    }
+
+    if ($photo['error'] !== UPLOAD_ERR_OK) {
+        $errors[] = 'Image upload failed.';
+    } elseif ($photo['size'] > 5 * 1024 * 1024) {
+        $errors[] = 'Image must be smaller than 5 MB.';
+    } elseif (!in_array(mime_content_type($photo['tmp_name']), ['image/jpeg', 'image/png', 'image/webp'], true)) {
+        $errors[] = 'Invalid image type.';
     }
 
     return $errors;
 }
 
-// Save a new active listing for the seller.
-function createListing($db, $data, $sellerId) {
+// Save a validated listing and its optional photo. Return any upload error to the form.
+function createListing($db, $data, $sellerId, $photo = null): array {
+    $image = null;
+    if ($photo !== null && $photo['error'] !== UPLOAD_ERR_NO_FILE) {
+        try {
+            require_once __DIR__ . '/storage.php';
+            $image = uploadImage($photo['tmp_name']);
+        } catch (Exception $uploadError) {
+            error_log('Listing image upload failed: ' . get_class($uploadError));
+            return ['Image upload failed. Please try again.'];
+        }
+    }
+
     $categoryId = $data['category_id'];
     $title = trim($data['title']);
     $description = trim($data['description']);
@@ -48,21 +71,50 @@ function createListing($db, $data, $sellerId) {
     $condition = $data['item_condition'];
     $pickup = $data['pickup_location'] ?? null;
 
-    $sql = $db->prepare("
-        INSERT INTO listings
-        (seller_id, category_id, title, description, price, item_condition, pickup_location, status, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-    ");
+    $commitStarted = false;
+    try {
+        $db->beginTransaction();
+        $sql = $db->prepare("
+            INSERT INTO listings
+            (seller_id, category_id, title, description, price, item_condition, pickup_location, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        ");
+        $sql->execute([
+            $sellerId,
+            $categoryId,
+            $title,
+            $description,
+            $price,
+            $condition,
+            $pickup
+        ]);
 
-    $sql->execute([
-        $sellerId,
-        $categoryId,
-        $title,
-        $description,
-        $price,
-        $condition,
-        $pickup
-    ]);
+        if ($image !== null) {
+            $listingId = $db->lastInsertId();
+            $sql = $db->prepare("
+                INSERT INTO listing_images (listing_id, file_path, cloudinary_public_id, uploaded_at)
+                VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+            ");
+            $sql->execute([$listingId, $image['image_url'], $image['public_id']]);
+        }
+
+        $commitStarted = true;
+        $db->commit();
+    } catch (Throwable $databaseError) {
+        try {
+            $rolledBack = $db->inTransaction() ? $db->rollBack(): !$commitStarted;
+
+            if ($image !== null && $rolledBack) {
+                if (!deletePhoto($image['public_id'])) {
+                    error_log('Image cleanup failed.');
+                }
+            }
+        } catch (Throwable $e) {
+            error_log('Rollback or cleanup failed.');
+        }
+        throw $databaseError;
+    }
+    return [];
 }
 
 // Get the categories in alphabetical order.

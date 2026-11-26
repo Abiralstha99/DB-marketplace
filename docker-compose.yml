@@ -1,7 +1,7 @@
 # Local MySQL for development. Same database name as the class server (f26_anrt)
-# and the same MySQL major version (8.0), loaded from database/db_backup_proj2.sql.
+# and the same MySQL major version (8.0), loaded from the backup and migrations.
 #
-#   docker compose up -d                 start (first start loads the backup)
+#   docker compose up -d                 start (first start loads and migrates the backup)
 #   docker compose down                  stop, keep data
 #   docker compose down -v && docker compose up -d   reset to the committed backup
 #
@@ -21,6 +21,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./database/db_backup_proj2.sql:/docker-entrypoint-initdb.d/01-backup.sql:ro
+      - ./database/migrations/20261126_cloudinary_listing_images.sql:/docker-entrypoint-initdb.d/02-cloudinary-listing-images.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-umarketplace", "-pmarketplace-dev"]
       interval: 5s

@@ -75,19 +75,6 @@ VALUES
   (5, 3, 'Desk lamp with USB port', 'Adjustable LED lamp in working condition.', 12.00, 'good', 'Musselman Library', 'active', NOW(), NOW()),
   (6, 2, 'Small bookshelf', 'Three-shelf bookcase, easy to carry and already assembled.', 20.00, 'good', 'College Union Building', 'active', NOW(), NOW());
 
--- 10 listing images: paths are placeholders, relative to public/uploads/
-INSERT INTO listing_images (image_id, listing_id, file_path, sort_order, uploaded_at) VALUES
-  (1,  1, 'listings/1_0.jpg', 0, '2026-09-01 10:16:00'),
-  (2,  1, 'listings/1_1.jpg', 1, '2026-09-01 10:17:00'),
-  (3,  2, 'listings/2_0.jpg', 0, '2026-09-02 17:31:00'),
-  (4,  3, 'listings/3_0.jpg', 0, '2026-09-05 12:02:00'),
-  (5,  3, 'listings/3_1.jpg', 1, '2026-09-05 12:03:00'),
-  (6,  4, 'listings/4_0.jpg', 0, '2026-09-10 10:01:00'),
-  (7,  5, 'listings/5_0.jpg', 0, '2026-09-15 18:01:00'),
-  (8,  6, 'listings/6_0.jpg', 0, '2026-09-20 14:32:00'),
-  (9,  8, 'listings/8_0.jpg', 0, '2026-10-26 08:16:00'),
-  (10, 9, 'listings/9_0.jpg', 0, '2026-11-01 11:01:00');
-
 -- 8 favorites: nobody saves their own listing, and each was saved before any sale
 INSERT INTO favorites (user_id, listing_id, created_at) VALUES
   (6, 1, '2026-09-02 09:00:00'),
